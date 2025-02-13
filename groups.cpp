@@ -113,31 +113,61 @@ groups::groups(QWidget *parent, QString groupName)
         qDebug() << "FILENAME " << lastChar;
 
         // Set button style (optional)
-        button->setStyleSheet("QPushButton {"
-                              "background-color: transparent;"
-                              "font: 900 9pt 'Arial Black';"
-                              "color: rgb(255, 255, 255);"
-                              "border: none;}"
-                              "QPushButton:hover {"
-                              "background-color: rgba(128, 128, 128, 0.5);"
-                              "color: rgb(255, 255, 255);"
-                              "border: none;}");
+        button->setStyleSheet(
+            "QPushButton {"
+            "    background-color: transparent;" // Transparent background
+            "    font: 900 9pt 'Arial Black';"  // Font style
+            "    color: rgb(255, 255, 255);"    // Text color
+            "    border: none;"                  // No border
+            "}"
+            "QPushButton:hover {"
+            "    background-color: rgba(128, 128, 128, 0.5);" // Semi-transparent gray background on hover
+            "    color: rgb(255, 255, 255);"                  // Text color on hover
+            "    border: none;"                               // No border on hover
+            "    border-radius: 15px;"                       // Rounded corners (adjust the radius as needed)
+            "}"
+            );
 
         // Set button size
-        button->setFixedSize(32, 32);
+        button->setFixedSize(28, 28);
 
+        // Extract the icon directly into a QPixmap
         // Extract the icon directly into a QPixmap
         QPixmap pixmap = extractPixmapFromExe(groups_app_patch[i]);
 
         // Check if the pixmap is valid
         if (pixmap.isNull()) {
-              qDebug() << "Failed to extract icon from:" << groups_app_patch[i];
+            qDebug() << "Failed to extract icon from:" << groups_app_patch[i];
         } else {
-            // Set the pixmap as the button's icon
-            button->setIcon(QIcon(pixmap));
-            button->setIconSize(QSize(32, 32));  // Set the icon size to match the button
-
             qDebug() << "Icon extracted successfully for:" << groups_app_patch[i];
+            qDebug() << "Pixmap size:" << pixmap.size();
+
+            // Save the pixmap to a file for debugging
+            if (!pixmap.save("debug_icon.png")) {
+                qDebug() << "Failed to save extracted icon to file!";
+            } else {
+                qDebug() << "Icon saved to debug_icon.png";
+            }
+
+            // Create a QIcon from the QPixmap
+            QIcon icon(pixmap);
+            if (icon.isNull()) {
+                qDebug() << "Failed to create QIcon from QPixmap!";
+            } else {
+                qDebug() << "QIcon created successfully.";
+            }
+
+            // Set the icon and icon size on the button
+            button->setIcon(icon);
+            button->setIconSize(QSize(24, 24)); // Ensure this matches the expected size
+            qDebug() << "Button icon size:" << button->iconSize();
+
+            // Force a repaint of the button
+            button->repaint();
+
+            // Debug button properties
+            qDebug() << "Button size:" << button->size();
+            qDebug() << "Button is visible:" << button->isVisible();
         }
 
 
@@ -153,7 +183,7 @@ groups::groups(QWidget *parent, QString groupName)
             }
             QProcess::startDetached(appPath);  // Launch the .exe
         });
- layout->update();
+
         // Update layout position
         col++;
         if (col == maxCols) {
@@ -195,49 +225,65 @@ QPixmap groups::extractPixmapFromExe(const QString &exePath) {
     QString fileName = fileInfo.fileName();
     qDebug() << "Extracting icon from file: " << fileName;
 
+    // Extract the icon from the executable
     HICON hIcon = ExtractIcon(NULL, exePath.toStdWString().c_str(), 0);
-
     if (hIcon == NULL) {
         qDebug() << "Failed to extract icon from" << exePath;
         return QPixmap(); // Return an empty pixmap if icon extraction fails
     }
 
-    // Extract icon information
+    // Get icon information
     ICONINFO iconInfo;
-    if (GetIconInfo(hIcon, &iconInfo)) {
-        BITMAP bitmap;
-        GetObject(iconInfo.hbmColor, sizeof(bitmap), &bitmap);
-
-        HDC hdc = GetDC(NULL);
-        HDC memDC = CreateCompatibleDC(hdc);
-        HBITMAP hBitmap = (HBITMAP)SelectObject(memDC, iconInfo.hbmColor);
-
-        BITMAPINFO bitmapInfo = {};
-        bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
-        bitmapInfo.bmiHeader.biWidth = bitmap.bmWidth;
-        bitmapInfo.bmiHeader.biHeight = -bitmap.bmHeight; // Negative to specify top-down bitmap
-        bitmapInfo.bmiHeader.biPlanes = 1;
-        bitmapInfo.bmiHeader.biBitCount = 32;
-
-        int rowSize = ((bitmap.bmWidth * 32 + 31) / 32) * 4;
-        QByteArray byteArray(rowSize * bitmap.bmHeight, 0);
-        int bytesRead = GetDIBits(hdc, hBitmap, 0, bitmap.bmHeight, byteArray.data(), &bitmapInfo, DIB_RGB_COLORS);
-
-        if (bytesRead == 0) {
-            qDebug() << "Failed to retrieve icon bitmap data.";
-            DestroyIcon(hIcon);
-            return QPixmap();
-        }
-
-        // Create a QImage from the QByteArray buffer
-        QImage img(reinterpret_cast<const uchar *>(byteArray.constData()), bitmap.bmWidth, bitmap.bmHeight, rowSize, QImage::Format_ARGB32);
-
-        // Create and return a QPixmap from the QImage
-        QPixmap pixmap = QPixmap::fromImage(img);
-        DestroyIcon(hIcon); // Clean up the icon handle
-        return pixmap;
+    if (!GetIconInfo(hIcon, &iconInfo)) {
+        qDebug() << "Failed to get icon info.";
+        DestroyIcon(hIcon);
+        return QPixmap();
     }
 
-    DestroyIcon(hIcon); // Clean up the icon handle if it failed to get icon info
-    return QPixmap();
+    // Get the color bitmap information
+    BITMAP bitmap;
+    if (!GetObject(iconInfo.hbmColor, sizeof(bitmap), &bitmap)) {
+        qDebug() << "Failed to get bitmap info.";
+        DestroyIcon(hIcon);
+        return QPixmap();
+    }
+
+    // Create a device context for the bitmap
+    HDC hdc = GetDC(NULL);
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, iconInfo.hbmColor);
+
+    // Prepare the BITMAPINFO structure
+    BITMAPINFO bmi = {};
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = bitmap.bmWidth;
+    bmi.bmiHeader.biHeight = -bitmap.bmHeight; // Negative for top-down bitmap
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+
+    // Allocate a buffer for the bitmap data
+    QByteArray buffer(bitmap.bmWidth * bitmap.bmHeight * 4, 0); // 32-bit ARGB format
+
+    // Retrieve the bitmap data
+    if (!GetDIBits(memDC, iconInfo.hbmColor, 0, bitmap.bmHeight, buffer.data(), &bmi, DIB_RGB_COLORS)) {
+        qDebug() << "Failed to retrieve bitmap data.";
+        SelectObject(memDC, hOldBitmap);
+        DeleteDC(memDC);
+        ReleaseDC(NULL, hdc);
+        DestroyIcon(hIcon);
+        return QPixmap();
+    }
+
+    // Create a QImage from the bitmap data
+    QImage img(reinterpret_cast<const uchar*>(buffer.constData()), bitmap.bmWidth, bitmap.bmHeight, QImage::Format_ARGB32);
+
+    // Clean up resources
+    SelectObject(memDC, hOldBitmap);
+    DeleteDC(memDC);
+    ReleaseDC(NULL, hdc);
+    DestroyIcon(hIcon);
+
+    // Convert the QImage to a QPixmap and return it
+    return QPixmap::fromImage(img);
 }
