@@ -95,8 +95,8 @@ groups::groups(QWidget *parent, QString groupName)
     // Create and add buttons to the layout
     int row = 0, col = 0;
     int maxCols = 4;  // Maximum number of buttons in one row
-    int buttonWidth = 32;
-    int buttonHeight = 32;
+    int buttonWidth = 28;
+    int buttonHeight = 28;
 
 
     for (int i = 0; i < groups_app_patch.count(); ++i) {
@@ -135,8 +135,12 @@ groups::groups(QWidget *parent, QString groupName)
         // Extract the icon directly into a QPixmap
         QPixmap pixmap = extractPixmapFromExe(groups_app_patch[i]);
 
+        bool isBlack = groups::isPixmapBlack(pixmap);
+        qDebug() << "isBlack " << isBlack;
         // Check if the pixmap is valid
-        if (pixmap.isNull()) {
+        // If pixmap isBlack = true, adds text instead of icon to button
+        if (pixmap.isNull() || isBlack) {
+            button->setText(QString(fileName)[0].toUpper() + QString(lastChar));
             qDebug() << "Failed to extract icon from:" << groups_app_patch[i];
         } else {
             qDebug() << "Icon extracted successfully for:" << groups_app_patch[i];
@@ -146,7 +150,7 @@ groups::groups(QWidget *parent, QString groupName)
             if (!pixmap.save("debug_icon.png")) {
                 qDebug() << "Failed to save extracted icon to file!";
             } else {
-                qDebug() << "Icon saved to debug_icon.png";
+                qDebug() << "Icon saved to debug_icon.png" << groups_app_patch[i];
             }
 
             // Create a QIcon from the QPixmap
@@ -194,25 +198,18 @@ groups::groups(QWidget *parent, QString groupName)
 
     // Set the layout to the central widget
     centralWidget->setLayout(layout);
-
     int totalButtons = groups_app_patch.count();
 
-    // Dynamically calculate number of columns (max 4 columns, or use all buttons if fewer than 4)
-     // Limit to 4 columns, or use fewer based on totalButtons
-    int totalRows = (totalButtons / maxCols) + (totalButtons % maxCols == 0 ? 0 : 1);  // Calculate number of rows needed
+    // Dynamically calculate number of columns (max 8 columns, or use all buttons if fewer than maxCols)
+    int totalCols = std::min(maxCols, totalButtons);  // Ensure columns don't exceed maxCols
+    int totalRows = (totalButtons / totalCols) + (totalButtons % totalCols == 0 ? 0 : 1);  // Calculate rows needed
 
     // Calculate window width and height
-    int width = buttonWidth * maxCols;  // Width for the number of columns
-    int height = totalRows * buttonHeight;  // Height depends on the number of rows required
-
-    // If there's only one button, resize the window to match the button size
-    if (totalButtons == 1) {
-        width = buttonWidth;  // Only one button, window should match button size
-        height = buttonHeight;
-    }
+    int width = buttonWidth * totalCols;  // Width is based on the number of columns (maxCols)
+    int height = buttonHeight * totalRows;  // Height depends on the number of rows required
 
     // Set the window size based on calculated width and height
-    resize(width + 34, height + 20);  // Add padding or margins as needed
+    resize(width+ 28, height + 20);  // Add padding or margins as needed
 }
 
 groups::~groups()
@@ -286,4 +283,31 @@ QPixmap groups::extractPixmapFromExe(const QString &exePath) {
 
     // Convert the QImage to a QPixmap and return it
     return QPixmap::fromImage(img);
+}
+
+bool groups::isPixmapBlack(const QPixmap& pixmap) {
+    // Convert QPixmap to QImage
+    QImage image = pixmap.toImage();
+
+    // Check if the image is empty
+    if (image.isNull()) {
+        qDebug() << "The image is empty.";
+        return false;
+    }
+
+    // Iterate through the pixels of the QImage
+    bool isBlack = true;
+    for (int y = 0; y < image.height(); ++y) {
+        for (int x = 0; x < image.width(); ++x) {
+            QColor color = image.pixelColor(x, y);
+            // Check if the pixel is not black (i.e., red, green, blue are not 0)
+            if (color.alpha() > 0 && (color.red() != 0 || color.green() != 0 || color.blue() != 0)) {
+                isBlack = false;
+                break;
+            }
+        }
+        if (!isBlack) break;
+    }
+
+    return isBlack;
 }
