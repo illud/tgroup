@@ -48,14 +48,6 @@ groups::groups(QWidget *parent, QString groupName)
     int windowWidth = this->width();
     int windowHeight = this->height();
 
-    // Define the margin (top space) you want between the cursor and the window
-    int marginTop = 50;
-
-    // Move the window so that its top-center is at the mouse position, plus the margin
-    int xPos = globalMousePos.x() - windowWidth / 2;
-    int yPos = globalMousePos.y() - windowHeight - marginTop;  // Add margin to the vertical position
-
-    move(xPos, yPos);
 
     // Set the window to stay on top of other windows
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -92,9 +84,12 @@ groups::groups(QWidget *parent, QString groupName)
         }
     }
 
+
+
+
     // Create and add buttons to the layout
     int row = 0, col = 0;
-    int maxCols = 4;  // Maximum number of buttons in one row
+    int maxCols = 8;  // Maximum number of buttons in one row
     int buttonWidth = 28;
     int buttonHeight = 28;
 
@@ -185,7 +180,23 @@ groups::groups(QWidget *parent, QString groupName)
             if (appPath.contains(" ")) {
                 appPath = "\"" + appPath + "\"";  // Wrap in quotes if path contains spaces
             }
-            QProcess::startDetached(appPath);  // Launch the .exe
+            // Create a QProcess instance
+            QProcess *process = new QProcess();  // Note: Pass 'this' as the parent to avoid memory leaks
+
+            // Get the directory of the executable
+            QFileInfo fileInfo(appPath);
+            QString workingDirectory = fileInfo.absolutePath(); // Get the directory where the exe is located
+
+            // Set the working directory of the process to the location of the exe
+            process->setWorkingDirectory(workingDirectory);
+
+            // Start the process (instead of startDetached())
+            process->start(appPath);
+
+            // Check if the process started successfully
+            if (!process->waitForStarted()) {
+                qDebug() << "Failed to start the process.";
+            }
         });
 
         // Update layout position
@@ -208,8 +219,44 @@ groups::groups(QWidget *parent, QString groupName)
     int width = buttonWidth * totalCols;  // Width is based on the number of columns (maxCols)
     int height = buttonHeight * totalRows;  // Height depends on the number of rows required
 
-    // Set the window size based on calculated width and height
-    resize(width+ 28, height + 20);  // Add padding or margins as needed
+    // temporal window width fix
+    switch (totalCols) {
+    case 1:
+        resize(width + 18, height + 20);  // Add padding or margins as needed
+        break;
+    case 2:
+         resize(width+ 23, height + 20);
+        break;
+    case 3:
+        resize(width+ 30, height + 20);
+        break;
+    case 4:
+        resize(width+ 35, height + 20);
+        break;
+    case 5:
+        resize(width+ 40, height + 20);
+        break;
+    case 6:
+        resize(width+ 45, height + 20);
+        break;
+    case 7:
+        resize(width+ 50, height + 20);
+        break;
+    case 8:
+        resize(width+ 54, height + 20);
+        break;
+    default:
+        break;
+    }
+
+    // Define the margin (top space) you want between the cursor and the window
+    int marginTop = height - 20;
+
+    // Move the window so that its top-center is at the mouse position, plus the margin
+    int xPos = globalMousePos.x() - windowWidth / 2;
+    int yPos = globalMousePos.y() - windowHeight - marginTop;  // Add margin to the vertical position
+
+    move(xPos, yPos);
 }
 
 groups::~groups()
