@@ -177,9 +177,9 @@ groups::groups(QWidget *parent, QString groupName)
         // Connect the button to launch the application when clicked
         connect(button, &QPushButton::clicked, this, [i, groups_app_patch]() {
             QString appPath = groups_app_patch[i];
-            if (appPath.contains(" ")) {
+            /*if (appPath.contains(" ")) {
                 appPath = "\"" + appPath + "\"";  // Wrap in quotes if path contains spaces
-            }
+            }*/
             // Create a QProcess instance
             QProcess *process = new QProcess();  // Note: Pass 'this' as the parent to avoid memory leaks
 
