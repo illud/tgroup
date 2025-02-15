@@ -250,20 +250,22 @@ groups::groups(QWidget *parent, QString groupName)
         break;
     }
     resize(width, height);
+
     // Get the current position of the mouse
     QPoint globalMousePos = QCursor::pos();
 
-    // Define the margin (top space) you want between the cursor and the window
-    int marginTop = height - 30;
+    // Get the screen's available geometry (excluding taskbar)
+    QRect availableGeometry = QGuiApplication::primaryScreen()->availableGeometry();
 
-    // Calculate the position to center the window's top at the mouse position
+    // Get the width and height of the window
     int windowWidth = this->width();
     int windowHeight = this->height();
 
-    // Move the window so that its top-center is at the mouse position, plus the margin
+    // Calculate the position for the window
     int xPos = globalMousePos.x() - windowWidth / 2;
-    int yPos = globalMousePos.y() - windowHeight - marginTop;  // Add margin to the vertical position
+    int yPos = availableGeometry.bottom() - windowHeight; // Just above the taskbar
 
+    // Move the window to the calculated position
     move(xPos, yPos);
 }
 
