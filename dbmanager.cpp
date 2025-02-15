@@ -124,7 +124,7 @@ QVector<DbManager::Group> DbManager::getGroups()
 {
     QVector<Group> groups;
 
-    QSqlQuery query("SELECT * FROM groups ORDER BY updatedAt DESC");
+    QSqlQuery query("SELECT * FROM groups ORDER BY id DESC");
     int idIndex = query.record().indexOf("id");
     int groupNameIndex = query.record().indexOf("groupName");
     int dataIndex = query.record().indexOf("data");
@@ -188,17 +188,13 @@ bool DbManager::deleteGroup(int groupId)
 {
 
     QSqlQuery query;
-    query.prepare("DELETE FROM group WHERE id = :groupId");
+    query.prepare("DELETE FROM groups WHERE id = :groupId");
     query.bindValue(":groupId", groupId);
 
     if (query.exec())
     {
-        while (query.next())
-        {
-            return true;
-        }
-    }
-    else
+      return true;
+    }else
     {
         qDebug() << "Error executing query int deleteGroup func:" << query.lastError().text();
         return false;

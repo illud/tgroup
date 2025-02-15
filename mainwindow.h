@@ -30,6 +30,12 @@ private slots:
 
     void on_groupBtn_clicked();
 
+    void on_deleteBtn_clicked(int groupId);
+
+    void load_groups();
+
+    void on_btn_push_back_data(int btnId);
+
 private:
     Ui::MainWindow *ui;
 };

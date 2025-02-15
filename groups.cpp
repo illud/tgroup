@@ -30,23 +30,16 @@ groups::groups(QWidget *parent, QString groupName)
     // Set the window opacity to be semi-transparent (optional)
    setWindowOpacity(0.9);
 
- setWindowFlags(windowFlags() | Qt::Popup);
+    setWindowFlags(windowFlags() | Qt::Popup);
    //this->setFocusPolicy(Qt::StrongFocus);  // Make the window focusable
   //  setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint); // Optionally keep window always on top, if needed
   //this->setWindowState(Qt::WindowActive);
     // Set the window to stay on top of other windows
 
-
     // Install event filter to track mouse events globally
     QApplication::instance()->installEventFilter(this);
 
 
-    // Get the current position of the mouse
-    QPoint globalMousePos = QCursor::pos();
-
-    // Calculate the position to center the window's top at the mouse position
-    int windowWidth = this->width();
-    int windowHeight = this->height();
 
 
     // Set the window to stay on top of other windows
@@ -222,35 +215,50 @@ groups::groups(QWidget *parent, QString groupName)
     // temporal window width fix
     switch (totalCols) {
     case 1:
-        resize(width + 18, height + 20);  // Add padding or margins as needed
+        width = width + 18;
+        height = height + 20;
         break;
     case 2:
-         resize(width+ 23, height + 20);
+        width = width + 23;
+        height = height + 20;
         break;
     case 3:
-        resize(width+ 30, height + 20);
+        width = width + 30;
+        height = height + 20;
         break;
     case 4:
-        resize(width+ 35, height + 20);
+        width = width + 35;
+        height = height + 20;
         break;
     case 5:
-        resize(width+ 40, height + 20);
+        width = width + 40;
+        height = height + 20;
         break;
     case 6:
-        resize(width+ 45, height + 20);
+        width = width + 45;
+        height = height + 20;
         break;
     case 7:
-        resize(width+ 50, height + 20);
+        width = width + 50;
+        height = height + 20;
         break;
     case 8:
-        resize(width+ 54, height + 20);
+        width = width + 54;
+        height = height + 20;
         break;
     default:
         break;
     }
+    resize(width, height);
+    // Get the current position of the mouse
+    QPoint globalMousePos = QCursor::pos();
 
     // Define the margin (top space) you want between the cursor and the window
-    int marginTop = height - 20;
+    int marginTop = height - 30;
+
+    // Calculate the position to center the window's top at the mouse position
+    int windowWidth = this->width();
+    int windowHeight = this->height();
 
     // Move the window so that its top-center is at the mouse position, plus the margin
     int xPos = globalMousePos.x() - windowWidth / 2;
