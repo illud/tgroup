@@ -184,6 +184,44 @@ QVector<DbManager::Group>  DbManager::getOneGroup(QString groupName){
     return groups;
 }
 
+QVector<DbManager::Group>  DbManager::getOneGroupById(int groupId){
+    QVector<Group> groups;
+
+    QSqlQuery query;
+    query.prepare("SELECT * FROM groups WHERE id = :groupId");
+    query.bindValue(":groupId", groupId);
+    qDebug() << groupId;
+
+
+    if (query.exec())
+    {
+        int idIndex = query.record().indexOf("id");
+        int groupNameIndex = query.record().indexOf("groupName");
+        int dataIndex = query.record().indexOf("data");
+        int createdAtIndex = query.record().indexOf("createdAt");
+        int updatedAtIndex = query.record().indexOf("updatedAt");
+
+        while (query.next())
+        {
+            int id = query.value(idIndex).toInt();
+            QString groupName = query.value(groupNameIndex).toString();
+            QString data = query.value(dataIndex).toString();
+
+            QString createdAt = query.value(createdAtIndex).toString();
+            QString updatedAt = query.value(updatedAtIndex).toString();
+
+            groups.push_back(Group{id, groupName, data, createdAt, updatedAt});
+        }
+    }
+    else
+    {
+        qDebug() << "Error executing query:" << query.lastError().text();
+    }
+
+
+    return groups;
+}
+
 bool DbManager::deleteGroup(int groupId)
 {
 

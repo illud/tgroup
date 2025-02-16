@@ -61,7 +61,8 @@ public:
     bool updateGroup(const QString groupName, const QString &data, const int &groupId);
     bool deleteGroup(int groupId);
     QVector<DbManager::Group> getGroups();
-     QVector<DbManager::Group> getOneGroup(QString groupName);
+    QVector<DbManager::Group> getOneGroup(QString groupName);
+    QVector<DbManager::Group> getOneGroupById(int groupId);
 };
 
 #endif // DBMANAGER_H

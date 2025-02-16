@@ -18,6 +18,8 @@ public:
     ~MainWindow();
     const QString path = "tgroups.db";
     QVector<QString> data;
+    QVector<QString> dataEdit;
+    int editGroupId;
 
 private slots:
     void on_newGroupBtn_clicked();
@@ -35,6 +37,13 @@ private slots:
     void load_groups();
 
     void on_btn_push_back_data(int btnId);
+
+    void on_editBtn_clicked(int groupId);
+
+    void on_searchGameExeBtn_2_clicked();
+    void on_btn_push_back_edit_data(int btnId);
+
+    void on_updateBtn_clicked();
 
 private:
     Ui::MainWindow *ui;

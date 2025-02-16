@@ -21,8 +21,7 @@ private:
     QString m_groupName;
 
 public slots:
-    QPixmap extractPixmapFromExe(const QString &exePath);
-    bool isPixmapBlack(const QPixmap& pixmap) ;
+
 
 protected:
 };

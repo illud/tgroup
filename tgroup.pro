@@ -13,12 +13,14 @@ SOURCES += \
     dbmanager.cpp \
     groups.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    util.cpp
 
 HEADERS += \
     dbmanager.h \
     groups.h \
-    mainwindow.h
+    mainwindow.h \
+    util.h
 
 FORMS += \
     groups.ui \
