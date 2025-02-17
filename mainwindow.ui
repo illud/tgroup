@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>335</width>
-    <height>467</height>
+    <width>321</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,8 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>70</y>
-      <width>331</width>
+      <y>40</y>
+      <width>321</width>
       <height>371</height>
      </rect>
     </property>
@@ -33,7 +33,7 @@
      <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>20</y>
         <width>291</width>
         <height>341</height>
@@ -507,7 +507,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>130</y>
+        <y>140</y>
         <width>281</width>
         <height>181</height>
        </rect>
@@ -670,7 +670,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>40</y>
+        <y>50</y>
         <width>171</width>
         <height>16</height>
        </rect>
@@ -688,7 +688,7 @@ color: rgb(255, 255, 255);</string>
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>50</y>
+        <y>60</y>
         <width>281</width>
         <height>24</height>
        </rect>
@@ -707,7 +707,7 @@ border-radius:0px;</string>
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>90</y>
+        <y>100</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -751,7 +751,7 @@ QPushButton::focus:pressed{
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>320</y>
+        <y>330</y>
         <width>191</width>
         <height>31</height>
        </rect>
@@ -866,30 +866,18 @@ QPushButton::focus:pressed{
      <string>Groups</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="groupBtn">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>50</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>335</width>
+     <width>321</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <resources/>
  <connections/>

@@ -8,6 +8,8 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include "util.h"
+#include <QStatusBar>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -353,9 +355,36 @@ void MainWindow::on_saveBtn_clicked()
     process.waitForFinished();
 
     if (process.exitCode() == 0) {
-        qDebug() << "Shortcut created successfully!";
+        // Set the status bar style
+        statusBar()->setStyleSheet("color: #ffffff; background-color: #388E3C; font-size: 13px;");
+        statusBar()->show();
+        // Create a QTimer to hide the message after 3 seconds
+        QTimer::singleShot(3000, statusBar(), [this]()
+                           {
+                               statusBar()->clearMessage(); // Clear the message after 3 seconds
+                               statusBar()->hide();         // Hide the status bar
+                           });
+
+        // Show the status message
+        statusBar()->showMessage(tr("Shortcut created successfully!"));
+
+        data.clear();
+        MainWindow::load_groups();
+        ui->stackedWidget->setCurrentIndex(0);
+
     } else {
-        qDebug() << "Failed to create the shortcut!";
+        // Set the status bar style
+        statusBar()->setStyleSheet("color: #ffffff; background-color: ##8e3838; font-size: 13px;");
+        statusBar()->show();
+        // Create a QTimer to hide the message after 3 seconds
+        QTimer::singleShot(3000, statusBar(), [this]()
+                           {
+                               statusBar()->clearMessage(); // Clear the message after 3 seconds
+                               statusBar()->hide();         // Hide the status bar
+                           });
+
+        // Show the status message
+        statusBar()->showMessage(tr("Failed to create the shortcut!"));
     }
 
     delete db;
@@ -367,6 +396,18 @@ void MainWindow::on_deleteBtn_clicked(int groupId)
 
     bool deleteResult = db->deleteGroup(groupId);
     if(deleteResult){
+        // Set the status bar style
+        statusBar()->setStyleSheet("color: #ffffff; background-color: #388E3C; font-size: 13px;");
+        statusBar()->show();
+        // Create a QTimer to hide the message after 3 seconds
+        QTimer::singleShot(3000, statusBar(), [this]()
+                           {
+                               statusBar()->clearMessage(); // Clear the message after 3 seconds
+                               statusBar()->hide();         // Hide the status bar
+                           });
+
+        // Show the status message
+        statusBar()->showMessage(tr("Group deleted successfully!"));
         MainWindow::load_groups();
     }else{
         qDebug() << "Error";
@@ -390,6 +431,7 @@ void MainWindow::on_editBtn_clicked(int groupId){
     groups = db->getOneGroupById(groupId);
 
     editGroupId = groups[0].id;
+    oldGroupName = groups[0].groupName;
 
     ui->lineEdit_2->setText(groups[0].groupName);
 
@@ -667,32 +709,74 @@ void MainWindow::on_updateBtn_clicked()
     // Instance db conn
     DbManager *db = new DbManager(path);
 
-    // Inser into games table
+    // Insert into games table
     QString result = QStringList::fromVector(data).join(", ");
     db->updateGroup(ui->lineEdit_2->text(), result, editGroupId);
 
     QString folderPath = "shortcuts";  // Folder where the shortcut will be created
-    QString shortcutPath = folderPath + "/" + ui->lineEdit->text() + ".lnk"; // Shortcut name
+    QString oldShortcutPath = folderPath + "/" + oldGroupName + ".lnk";
+
+    QString shortcutPath = folderPath + "/" + ui->lineEdit_2->text() + ".lnk";
+
+    // Check if shortcut already exists, if so, delete it
+    QFile shortcutFile(oldShortcutPath);
+    if (shortcutFile.exists()) {
+        if (!shortcutFile.remove()) {
+            qDebug() << "Failed to delete existing shortcut!";
+            delete db;
+            return; // Exit if the shortcut couldn't be deleted
+        } else {
+            qDebug() << "Existing shortcut deleted.";
+        }
+    }
 
     QString appDir = QCoreApplication::applicationDirPath();
 
-    // Command to create a shortcut using PowerShell script
+    // Command to create a new shortcut using PowerShell script
     QString command = QString("powershell -Command \"$WshShell = New-Object -ComObject WScript.Shell; "
                               "$shortcut = $WshShell.CreateShortcut('%1'); "
                               "$shortcut.TargetPath = '%2\\tgroup.exe'; "
                               "$shortcut.Arguments = '%3'; "
-                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit->text());
+                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit_2->text());
 
     QProcess process;
     process.start(command);
     process.waitForFinished();
 
     if (process.exitCode() == 0) {
-        qDebug() << "Shortcut updated successfully!";
+        // Set the status bar style
+        statusBar()->setStyleSheet("color: #ffffff; background-color: #388E3C; font-size: 13px;");
+        statusBar()->show();
+        // Create a QTimer to hide the message after 3 seconds
+        QTimer::singleShot(3000, statusBar(), [this]()
+                           {
+                               statusBar()->clearMessage(); // Clear the message after 3 seconds
+                               statusBar()->hide();         // Hide the status bar
+                           });
+
+        // Show the status message
+        statusBar()->showMessage(tr("Shortcut updated successfully!"));
+
+        data.clear();
+        MainWindow::load_groups();
+        ui->stackedWidget->setCurrentIndex(0);
     } else {
-        qDebug() << "Failed to updated the shortcut!";
+        qDebug() << "Failed to update the shortcut!";
+        // Set the status bar style
+        statusBar()->setStyleSheet("color: #ffffff; background-color: ##8e3838; font-size: 13px;");
+        statusBar()->show();
+        // Create a QTimer to hide the message after 3 seconds
+        QTimer::singleShot(3000, statusBar(), [this]()
+                           {
+                               statusBar()->clearMessage(); // Clear the message after 3 seconds
+                               statusBar()->hide();         // Hide the status bar
+                           });
+
+        // Show the status message
+        statusBar()->showMessage(tr("Failed to update the shortcut!"));
     }
 
     delete db;
 }
+
 

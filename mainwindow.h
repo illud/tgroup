@@ -18,6 +18,7 @@ public:
     ~MainWindow();
     const QString path = "tgroups.db";
     QVector<QString> data;
+    QString oldGroupName;
     QVector<QString> dataEdit;
     int editGroupId;
 
