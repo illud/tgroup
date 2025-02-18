@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qevent.h"
 #include "ui_mainwindow.h"
 #include "groups.h"
 #include "dbmanager.h"
@@ -17,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    MainWindow::setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 
     // tableWidgets
     ui->tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
@@ -50,6 +53,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    startPos = event->pos();
+    QWidget::mousePressEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    QPoint delta = event->pos() - startPos;
+    QWidget *w = window();
+    if (w)
+        w->move(w->pos() + delta);
+    QWidget::mouseMoveEvent(event);
+}
 
 void MainWindow::load_groups(){
     DbManager *db = new DbManager(path);
@@ -861,5 +878,11 @@ void MainWindow::on_searchGroupIcon_2_clicked()
     } else {
         qDebug() << "Failed to save image as .ico";
     }
+}
+
+
+void MainWindow::on_closeBtn_clicked()
+{
+    this->close();
 }
 

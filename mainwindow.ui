@@ -2,13 +2,22 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>321</width>
-    <height>452</height>
+    <height>499</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>TGroup</string>
@@ -21,7 +30,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>40</y>
+      <y>70</y>
       <width>321</width>
       <height>371</height>
      </rect>
@@ -880,7 +889,7 @@ QPushButton#searchGroupIcon_2::focus:pressed{
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>10</y>
+      <y>50</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -919,7 +928,7 @@ QPushButton::focus:pressed{
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>10</y>
+      <y>50</y>
       <width>80</width>
       <height>24</height>
      </rect>
@@ -954,6 +963,99 @@ QPushButton::focus:pressed{
      <string>Groups</string>
     </property>
    </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>321</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(40, 40, 40);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="closeBtn">
+     <property name="geometry">
+      <rect>
+       <x>291</x>
+       <y>4</y>
+       <width>24</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton { 
+	background-color: transparent;
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+
+	border-color: rgb(255, 255, 255);
+	border-style: outset;
+
+}
+
+QPushButton:hover{ 
+    /*background-color: rgb(252, 196, 25);*/
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(127, 29, 29);
+    border: 0px;
+}
+
+QPushButton::focus:pressed{ 
+	background-color: rgb(252, 72, 25);
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+    border: 0px;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>6</x>
+       <y>5</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="app_resources.qrc">:/tgroup_app.ico</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>7</y>
+       <width>49</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>TGroup</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -967,6 +1069,8 @@ QPushButton::focus:pressed{
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="app_resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

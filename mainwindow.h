@@ -51,7 +51,14 @@ private slots:
 
     void on_searchGroupIcon_2_clicked();
 
+    void on_closeBtn_clicked();
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
 private:
     Ui::MainWindow *ui;
+    QPoint startPos;
 };
 #endif // MAINWINDOW_H
