@@ -10,6 +10,7 @@
 #include "util.h"
 #include <QStatusBar>
 #include <QTimer>
+#include <QUuid>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -348,7 +349,8 @@ void MainWindow::on_saveBtn_clicked()
                               "$shortcut = $WshShell.CreateShortcut('%1'); "
                               "$shortcut.TargetPath = '%2\\tgroup.exe'; "
                               "$shortcut.Arguments = '%3'; "
-                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit->text());
+                              "$shortcut.IconLocation = '%4'; "
+                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit->text()).arg(groupIcon);
 
     QProcess process;
     process.start(command);
@@ -732,12 +734,13 @@ void MainWindow::on_updateBtn_clicked()
 
     QString appDir = QCoreApplication::applicationDirPath();
 
-    // Command to create a new shortcut using PowerShell script
+    // Command to create a shortcut using PowerShell script
     QString command = QString("powershell -Command \"$WshShell = New-Object -ComObject WScript.Shell; "
                               "$shortcut = $WshShell.CreateShortcut('%1'); "
                               "$shortcut.TargetPath = '%2\\tgroup.exe'; "
                               "$shortcut.Arguments = '%3'; "
-                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit_2->text());
+                              "$shortcut.IconLocation = '%4'; "
+                              "$shortcut.Save()\"").arg(shortcutPath).arg(appDir).arg(ui->lineEdit_2->text()).arg(groupIcon);
 
     QProcess process;
     process.start(command);
@@ -779,4 +782,84 @@ void MainWindow::on_updateBtn_clicked()
     delete db;
 }
 
+
+
+void MainWindow::on_searchGroupIcon_clicked()
+{
+    groupIcon = "";
+    // Open file dialog to select an image
+    QString filePath = QFileDialog::getOpenFileName(this, "Get group icon");
+
+    if (filePath.isEmpty()) {
+        return; // If no file was selected, exit the function
+    }
+
+    // Load the image
+    QImage image(filePath);
+
+    if (image.isNull()) {
+        qDebug() << "Failed to load image!";
+        return;
+    }
+
+    // Get the application's path
+    QString appPath = QCoreApplication::applicationDirPath();
+
+    // Define the path to the "icons" folder inside the app directory
+    QDir iconsDir(appPath);
+    iconsDir.mkdir("icons"); // Create the folder if it doesn't exist
+
+    // Generate a random name for the .ico file using QUuid
+    QString randomName = QUuid::createUuid().toString().remove('{').remove('}');
+    QString icoPath = iconsDir.absoluteFilePath("icons/" + randomName + ".ico");
+
+    // Save the image as .ico
+    if (image.save(icoPath, "ICO")) {
+        qDebug() << "Image successfully converted to .ico and saved at" << icoPath;
+        // Set the group icon
+        groupIcon = icoPath;
+    } else {
+        qDebug() << "Failed to save image as .ico";
+    }
+}
+
+
+void MainWindow::on_searchGroupIcon_2_clicked()
+{
+    groupIcon = "";
+    // Open file dialog to select an image
+    QString filePath = QFileDialog::getOpenFileName(this, "Get group icon");
+
+    if (filePath.isEmpty()) {
+        return; // If no file was selected, exit the function
+    }
+
+    // Load the image
+    QImage image(filePath);
+
+    if (image.isNull()) {
+        qDebug() << "Failed to load image!";
+        return;
+    }
+
+    // Get the application's path
+    QString appPath = QCoreApplication::applicationDirPath();
+
+    // Define the path to the "icons" folder inside the app directory
+    QDir iconsDir(appPath);
+    iconsDir.mkdir("icons"); // Create the folder if it doesn't exist
+
+    // Generate a random name for the .ico file using QUuid
+    QString randomName = QUuid::createUuid().toString().remove('{').remove('}');
+    QString icoPath = iconsDir.absoluteFilePath("icons/" + randomName + ".ico");
+
+    // Save the image as .ico
+    if (image.save(icoPath, "ICO")) {
+        qDebug() << "Image successfully converted to .ico and saved at" << icoPath;
+        // Set the group icon
+        groupIcon = icoPath;
+    } else {
+        qDebug() << "Failed to save image as .ico";
+    }
+}
 

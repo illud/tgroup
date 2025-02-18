@@ -501,6 +501,50 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
        </property>
       </column>
      </widget>
+     <widget class="QPushButton" name="searchGroupIcon">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>100</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton#searchGroupIcon { 
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+        border: 1px;
+	border-color: rgb(255, 255, 255);
+	border-style: outset;
+border-radius: 10px;
+}
+
+QPushButton#searchGroupIcon:hover{ 
+    background-color: rgb(252, 196, 25);
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+    border: 0px;
+}
+
+QPushButton#searchGroupIcon::focus:pressed{ 
+    background-color: rgb(252, 72, 25);
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+    border: 0px;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Group Image</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <widget class="QTableWidget" name="tableWidget_3">
@@ -784,6 +828,50 @@ QPushButton::focus:pressed{
       </property>
       <property name="text">
        <string>Update</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="searchGroupIcon_2">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>100</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton#searchGroupIcon_2 { 
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+        border: 1px;
+	border-color: rgb(255, 255, 255);
+	border-style: outset;
+border-radius: 10px;
+}
+
+QPushButton#searchGroupIcon_2:hover{ 
+    background-color: rgb(252, 196, 25);
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+    border: 0px;
+}
+
+QPushButton#searchGroupIcon_2::focus:pressed{ 
+    background-color: rgb(252, 72, 25);
+	font: 900 9pt &quot;Arial Black&quot;;
+	color: rgb(255, 255, 255);
+    border: 0px;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Group Image</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

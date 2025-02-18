@@ -21,6 +21,7 @@ public:
     QString oldGroupName;
     QVector<QString> dataEdit;
     int editGroupId;
+    QString groupIcon;
 
 private slots:
     void on_newGroupBtn_clicked();
@@ -45,6 +46,10 @@ private slots:
     void on_btn_push_back_edit_data(int btnId);
 
     void on_updateBtn_clicked();
+
+    void on_searchGroupIcon_clicked();
+
+    void on_searchGroupIcon_2_clicked();
 
 private:
     Ui::MainWindow *ui;
