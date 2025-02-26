@@ -14,6 +14,8 @@
 #include <Windows.h>
 #include <QPainter>
 #include "util.h"
+#include <QPainterPath>
+#include <QPropertyAnimation>
 
 groups::groups(QWidget *parent, QString groupName)
     : QWidget(parent)
@@ -39,9 +41,6 @@ groups::groups(QWidget *parent, QString groupName)
 
     // Install event filter to track mouse events globally
     QApplication::instance()->installEventFilter(this);
-
-
-
 
     // Set the window to stay on top of other windows
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -78,9 +77,6 @@ groups::groups(QWidget *parent, QString groupName)
         }
     }
 
-
-
-
     // Create and add buttons to the layout
     int row = 0, col = 0;
     int maxCols = 8;  // Maximum number of buttons in one row
@@ -108,12 +104,13 @@ groups::groups(QWidget *parent, QString groupName)
             "    font: 900 9pt 'Arial Black';"  // Font style
             "    color: rgb(255, 255, 255);"    // Text color
             "    border: none;"                  // No border
+             "    border-radius: 6px;"
             "}"
             "QPushButton:hover {"
             "    background-color: rgba(128, 128, 128, 0.5);" // Semi-transparent gray background on hover
             "    color: rgb(255, 255, 255);"                  // Text color on hover
             "    border: none;"                               // No border on hover
-            "    border-radius: 15px;"                       // Rounded corners (adjust the radius as needed)
+            "    border-radius: 6px;"                       // Rounded corners (adjust the radius as needed)
             "}"
             );
 
@@ -211,47 +208,56 @@ groups::groups(QWidget *parent, QString groupName)
     int totalRows = (totalButtons / totalCols) + (totalButtons % totalCols == 0 ? 0 : 1);  // Calculate rows needed
 
     // Calculate window width and height
-    int width = buttonWidth * totalCols;  // Width is based on the number of columns (maxCols)
-    int height = buttonHeight * totalRows;  // Height depends on the number of rows required
+    int WWidth = buttonWidth * totalCols;  // Width is based on the number of columns (maxCols)
+    int WHeight = buttonHeight * totalRows;  // Height depends on the number of rows required
 
     // temporal window width fix
     switch (totalCols) {
     case 1:
-        width = width + 18;
-        height = height + 20;
+        WWidth = WWidth + 18;
+        WHeight = WHeight + 20;
         break;
     case 2:
-        width = width + 23;
-        height = height + 20;
+        WWidth = WWidth + 23;
+        WHeight = WHeight + 20;
         break;
     case 3:
-        width = width + 30;
-        height = height + 20;
+        WWidth = WWidth + 30;
+        WHeight = WHeight + 20;
         break;
     case 4:
-        width = width + 35;
-        height = height + 20;
+        WWidth = WWidth + 35;
+        WHeight = WHeight + 20;
         break;
     case 5:
-        width = width + 40;
-        height = height + 20;
+        WWidth = WWidth + 40;
+        WHeight = WHeight + 20;
         break;
     case 6:
-        width = width + 45;
-        height = height + 20;
+        WWidth = WWidth + 45;
+        WHeight = WHeight + 20;
         break;
     case 7:
-        width = width + 50;
-        height = height + 20;
+        WWidth = WWidth + 50;
+        WHeight = WHeight + 20;
         break;
     case 8:
-        width = width + 54;
-        height = height + 20;
+        WWidth = WWidth + 54;
+        WHeight = WHeight + 20;
         break;
     default:
         break;
     }
-    resize(width, height);
+    resize(WWidth, WHeight);
+
+    // Create a rounded rectangle shape for the window
+    QRegion region(0, 0, width(), height(), QRegion::Rectangle);  // Start with a normal rectangle
+    QPainterPath path;
+    path.addRoundedRect(0, 0, width(), height(), 5, 5);  // 20 is the radius for rounded corners
+    region = QRegion(path.toFillPolygon().toPolygon());
+
+    // Apply the region to the window to clip it
+    setMask(region);
 
     // Get the current position of the mouse
     QPoint globalMousePos = QCursor::pos();
@@ -268,7 +274,15 @@ groups::groups(QWidget *parent, QString groupName)
     int yPos = availableGeometry.bottom() - windowHeight; // Just above the taskbar
 
     // Move the window to the calculated position
-    move(xPos, yPos);
+    move(xPos, yPos + 140);
+
+    // Start the animation to move the window to the target position
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "pos");
+    animation->setDuration(200);  // Set the duration of the animation (500 ms)
+    animation->setStartValue(this->pos());  // Start at the current position
+    animation->setEndValue(QPoint(xPos, yPos));  // Target position
+    animation->setEasingCurve(QEasingCurve::OutQuad);  // Smooth easing curve for the animation
+    animation->start(QAbstractAnimation::DeleteWhenStopped);  // Start the animation and delete when finished
 }
 
 groups::~groups()
